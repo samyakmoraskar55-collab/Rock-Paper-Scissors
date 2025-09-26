@@ -1,1 +1,1063 @@
-
+<aiGame title="Rock Paper Scissors">
+  <aiFile file="index.html">
+  <![CDATA[
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Rock Paper Scissors</title>
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+  
+          body {
+              font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+              background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd);
+              background-size: 400% 400%;
+              animation: gradientBG 15s ease infinite;
+              color: #333;
+              min-height: 100vh;
+              padding: 20px;
+          }
+  
+          @keyframes gradientBG {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+          }
+  
+          #gameContainer {
+              max-width: 1200px;
+              margin: 0 auto;
+          }
+  
+          /* First Screen Styles */
+          #firstScreen {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-height: 90vh;
+              padding: 20px;
+          }
+  
+          .header {
+              text-align: center;
+              margin-bottom: 40px;
+              width: 100%;
+          }
+  
+          .header h1 {
+              font-size: 3.5rem;
+              margin-bottom: 10px;
+              text-shadow: 3px 3px 0 #ff6b6b, 6px 6px 0 #4ecdc4;
+              color: #ffd166;
+              letter-spacing: 2px;
+          }
+  
+          .subtitle {
+              font-size: 1.5rem;
+              color: #6a5acd;
+              font-weight: bold;
+          }
+  
+          .content {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 30px;
+              margin-bottom: 40px;
+              width: 100%;
+          }
+  
+          .card {
+              background: rgba(255, 255, 255, 0.85);
+              border-radius: 20px;
+              padding: 25px;
+              width: 100%;
+              max-width: 500px;
+              box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+              border: 5px solid #ff6b6b;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          .card:before {
+              content: "";
+              position: absolute;
+              top: -10px;
+              left: -10px;
+              right: -10px;
+              bottom: -10px;
+              border: 3px solid #4ecdc4;
+              border-radius: 25px;
+              pointer-events: none;
+          }
+  
+          .card h2 {
+              color: #ff6b6b;
+              margin-bottom: 15px;
+              font-size: 2rem;
+              text-align: center;
+              background: #ffd166;
+              padding: 10px;
+              border-radius: 15px;
+              border: 3px dashed #6a5acd;
+          }
+  
+          .card p {
+              font-size: 1.2rem;
+              line-height: 1.6;
+              margin-bottom: 15px;
+              color: #333;
+          }
+  
+          .card ul {
+              padding-left: 20px;
+          }
+  
+          .card li {
+              margin-bottom: 10px;
+              font-size: 1.2rem;
+              line-height: 1.5;
+              color: #333;
+              position: relative;
+              padding-left: 25px;
+          }
+  
+          .card li:before {
+              content: "★";
+              color: #ff6b6b;
+              position: absolute;
+              left: 0;
+          }
+  
+          #startButton {
+              background: linear-gradient(45deg, #ff6b6b, #ffd166);
+              color: white;
+              border: none;
+              padding: 20px 50px;
+              font-size: 1.8rem;
+              border-radius: 50px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+              font-weight: bold;
+              letter-spacing: 2px;
+              border: 5px solid #4ecdc4;
+              text-shadow: 2px 2px 0 #6a5acd;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          #startButton:hover {
+              transform: translateY(-10px) scale(1.1);
+              box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+              background: linear-gradient(45deg, #ffd166, #ff6b6b);
+          }
+  
+          #startButton:active {
+              transform: translateY(0) scale(0.95);
+          }
+  
+          #startButton:after {
+              content: "🚀";
+              position: absolute;
+              right: 20px;
+              top: 50%;
+              transform: translateY(-50%);
+              font-size: 2rem;
+          }
+  
+          /* Second Screen Styles */
+          #secondScreen .header h1 {
+              font-size: 2.8rem;
+              margin-bottom: 30px;
+              text-shadow: 3px 3px 0 #4ecdc4;
+          }
+  
+          #gameStats {
+              display: flex;
+              justify-content: center;
+              gap: 30px;
+              margin-bottom: 20px;
+              flex-wrap: wrap;
+          }
+  
+          .stat-card {
+              background: rgba(255, 255, 255, 0.9);
+              border-radius: 20px;
+              padding: 20px;
+              text-align: center;
+              min-width: 140px;
+              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+              border: 4px solid #ffd166;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          .stat-card:before {
+              content: "";
+              position: absolute;
+              top: -5px;
+              left: -5px;
+              right: -5px;
+              bottom: -5px;
+              border: 2px solid #ff6b6b;
+              border-radius: 22px;
+              pointer-events: none;
+          }
+  
+          .stat-label {
+              font-size: 1.3rem;
+              margin-bottom: 10px;
+              color: #6a5acd;
+              font-weight: bold;
+          }
+  
+          .stat-value {
+              font-size: 2.8rem;
+              font-weight: bold;
+              color: #ff6b6b;
+              text-shadow: 2px 2px 0 #ffd166;
+          }
+  
+          #bettingArea {
+              display: flex;
+              justify-content: center;
+              margin: 25px 0;
+          }
+  
+          .bet-controls {
+              display: flex;
+              align-items: center;
+              gap: 25px;
+              background: rgba(255, 255, 255, 0.9);
+              padding: 20px 40px;
+              border-radius: 50px;
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+              border: 5px solid #4ecdc4;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          .bet-controls:before {
+              content: "";
+              position: absolute;
+              top: -5px;
+              left: -5px;
+              right: -5px;
+              bottom: -5px;
+              border: 3px dashed #ff6b6b;
+              border-radius: 55px;
+              pointer-events: none;
+          }
+  
+          .bet-btn {
+              background: linear-gradient(45deg, #6a5acd, #4ecdc4);
+              color: white;
+              border: none;
+              width: 60px;
+              height: 60px;
+              border-radius: 50%;
+              font-size: 2.5rem;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+              border: 3px solid #ffd166;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
+  
+          .bet-btn:hover {
+              transform: scale(1.2);
+              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+              background: linear-gradient(45deg, #4ecdc4, #6a5acd);
+          }
+  
+          .bet-btn:active {
+              transform: scale(0.9);
+          }
+  
+          .bet-display {
+              font-size: 1.8rem;
+              font-weight: bold;
+              min-width: 140px;
+              text-align: center;
+              color: #333;
+          }
+  
+          .bet-display span:first-child {
+              color: #6a5acd;
+              font-weight: bold;
+          }
+  
+          .bet-display span:last-child {
+              color: #ff6b6b;
+              text-shadow: 1px 1px 0 #ffd166;
+          }
+  
+          #gameArea {
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              margin: 40px 0;
+              flex-wrap: wrap;
+              gap: 30px;
+          }
+  
+          .choice-container {
+              text-align: center;
+              width: 40%;
+              min-width: 280px;
+              background: rgba(255, 255, 255, 0.9);
+              border-radius: 30px;
+              padding: 30px;
+              box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+              border: 5px solid #ffd166;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          .choice-container:before {
+              content: "";
+              position: absolute;
+              top: -10px;
+              left: -10px;
+              right: -10px;
+              bottom: -10px;
+              border: 3px dashed #ff6b6b;
+              border-radius: 35px;
+              pointer-events: none;
+          }
+  
+          .choice-container h3 {
+              font-size: 1.8rem;
+              margin-bottom: 25px;
+              color: #6a5acd;
+              background: #4ecdc4;
+              padding: 10px;
+              border-radius: 15px;
+              border: 3px solid #ffd166;
+          }
+  
+          .selection {
+              width: 200px;
+              height: 200px;
+              margin: 0 auto;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: rgba(255, 255, 255, 0.7);
+              border-radius: 50%;
+              font-size: 7rem;
+              transition: transform 0.3s ease;
+              border: 5px solid #ff6b6b;
+              box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+          }
+  
+          .selection:hover {
+              transform: scale(1.1);
+          }
+  
+          .vs {
+              font-size: 4rem;
+              font-weight: bold;
+              color: #ff6b6b;
+              text-shadow: 3px 3px 0 #ffd166;
+              animation: pulse 1.5s infinite;
+          }
+  
+          @keyframes pulse {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.1); }
+              100% { transform: scale(1); }
+          }
+  
+          #choices {
+              display: flex;
+              justify-content: center;
+              gap: 40px;
+              margin: 40px 0;
+              flex-wrap: wrap;
+          }
+  
+          .choice-btn {
+              background: rgba(255, 255, 255, 0.9);
+              border: 4px solid #4ecdc4;
+              border-radius: 25px;
+              cursor: pointer;
+              width: 160px;
+              height: 160px;
+              transition: all 0.3s ease;
+              box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          .choice-btn:before {
+              content: "";
+              position: absolute;
+              top: -5px;
+              left: -5px;
+              right: -5px;
+              bottom: -5px;
+              border: 3px dashed #ff6b6b;
+              border-radius: 30px;
+              pointer-events: none;
+          }
+  
+          .choice-btn:hover {
+              transform: translateY(-15px) scale(1.1);
+              background: rgba(255, 255, 255, 1);
+              box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+              border-color: #ffd166;
+          }
+  
+          .choice-btn:active {
+              transform: translateY(0) scale(0.95);
+          }
+  
+          .btn-content {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+          }
+  
+          .emoji {
+              font-size: 4.5rem;
+              margin-bottom: 10px;
+              text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+          }
+  
+          .label {
+              font-size: 1.4rem;
+              font-weight: bold;
+              color: #6a5acd;
+              text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+          }
+  
+          #result {
+              text-align: center;
+              font-size: 2.5rem;
+              font-weight: bold;
+              margin: 40px 0;
+              min-height: 3em;
+              text-shadow: 3px 3px 0 rgba(255, 255, 255, 0.8);
+              color: #333;
+              background: rgba(255, 255, 255, 0.9);
+              padding: 20px;
+              border-radius: 20px;
+              border: 5px solid #ff6b6b;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          #result:before {
+              content: "";
+              position: absolute;
+              top: -5px;
+              left: -5px;
+              right: -5px;
+              bottom: -5px;
+              border: 3px dashed #4ecdc4;
+              border-radius: 25px;
+              pointer-events: none;
+          }
+  
+          /* Game Over Popup */
+          #gameOverPopup {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.7);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              z-index: 100;
+              backdrop-filter: blur(5px);
+          }
+  
+          #popupContent {
+              background: linear-gradient(135deg, #ffd166, #ff6b6b);
+              padding: 50px;
+              border-radius: 30px;
+              text-align: center;
+              box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+              border: 8px solid #4ecdc4;
+              max-width: 90%;
+              width: 600px;
+              position: relative;
+              overflow: hidden;
+          }
+  
+          #popupContent:before {
+              content: "";
+              position: absolute;
+              top: -15px;
+              left: -15px;
+              right: -15px;
+              bottom: -15px;
+              border: 5px dashed #6a5acd;
+              border-radius: 40px;
+              pointer-events: none;
+          }
+  
+          #popupContent h2 {
+              color: #6a5acd;
+              font-size: 3rem;
+              margin-bottom: 30px;
+              text-shadow: 3px 3px 0 rgba(255, 255, 255, 0.8);
+          }
+  
+          #finalResult {
+              font-size: 1.8rem;
+              margin: 40px 0;
+              line-height: 1.8;
+              color: #333;
+              font-weight: bold;
+          }
+  
+          #playAgainButton {
+              background: linear-gradient(45deg, #4ecdc4, #6a5acd);
+              color: white;
+              border: none;
+              padding: 20px 40px;
+              font-size: 1.8rem;
+              border-radius: 50px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+              font-weight: bold;
+              border: 5px solid #ffd166;
+              text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+          }
+  
+          #playAgainButton:hover {
+              transform: translateY(-10px) scale(1.1);
+              box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+              background: linear-gradient(45deg, #6a5acd, #4ecdc4);
+          }
+  
+          /* Responsive Design */
+          @media (max-width: 768px) {
+              .header h1 {
+                  font-size: 2.5rem;
+              }
+              
+              .content {
+                  flex-direction: column;
+                  align-items: center;
+              }
+              
+              .card {
+                  width: 90%;
+              }
+              
+              #gameArea {
+                  flex-direction: column;
+              }
+              
+              .choice-container {
+                  width: 90%;
+              }
+              
+              .selection {
+                  width: 160px;
+                  height: 160px;
+                  font-size: 5rem;
+              }
+              
+              .vs {
+                  font-size: 3rem;
+                  margin: 30px 0;
+              }
+              
+              .choice-btn {
+                  width: 130px;
+                  height: 130px;
+              }
+              
+              .emoji {
+                  font-size: 3.5rem;
+              }
+              
+              .label {
+                  font-size: 1.2rem;
+              }
+              
+              #result {
+                  font-size: 2rem;
+              }
+              
+              #gameStats {
+                  gap: 15px;
+              }
+              
+              .stat-card {
+                  min-width: 100px;
+                  padding: 15px;
+              }
+              
+              .stat-value {
+                  font-size: 2.2rem;
+              }
+              
+              .bet-controls {
+                  padding: 15px 25px;
+                  gap: 20px;
+              }
+              
+              .bet-btn {
+                  width: 50px;
+                  height: 50px;
+                  font-size: 2rem;
+              }
+              
+              .bet-display {
+                  font-size: 1.5rem;
+                  min-width: 120px;
+              }
+          }
+  
+          @media (max-width: 480px) {
+              body {
+                  padding: 10px;
+              }
+              
+              .header h1 {
+                  font-size: 2rem;
+              }
+              
+              #gameStats {
+                  gap: 10px;
+              }
+              
+              .stat-card {
+                  min-width: 85px;
+                  padding: 12px;
+              }
+              
+              .stat-label {
+                  font-size: 1rem;
+              }
+              
+              .stat-value {
+                  font-size: 1.8rem;
+              }
+              
+              .selection {
+                  width: 130px;
+                  height: 130px;
+                  font-size: 4rem;
+              }
+              
+              #choices {
+                  gap: 15px;
+              }
+              
+              .choice-btn {
+                  width: 100px;
+                  height: 100px;
+              }
+              
+              .emoji {
+                  font-size: 2.8rem;
+              }
+              
+              .label {
+                  font-size: 1rem;
+              }
+              
+              #result {
+                  font-size: 1.6rem;
+              }
+              
+              .bet-controls {
+                  padding: 10px 20px;
+                  gap: 15px;
+              }
+              
+              .bet-btn {
+                  width: 40px;
+                  height: 40px;
+                  font-size: 1.5rem;
+              }
+              
+              .bet-display {
+                  font-size: 1.3rem;
+                  min-width: 100px;
+              }
+              
+              #popupContent {
+                  padding: 30px;
+                  width: 90%;
+              }
+              
+              #popupContent h2 {
+                  font-size: 2.2rem;
+              }
+              
+              #finalResult {
+                  font-size: 1.4rem;
+              }
+              
+              #playAgainButton {
+                  font-size: 1.4rem;
+                  padding: 15px 30px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div id="gameContainer">
+          <!-- First Screen -->
+          <div id="firstScreen">
+              <div class="header">
+                  <h1>🪨📄✂️ Rock Paper Scissors</h1>
+                  <p class="subtitle">Challenge the computer in this classic game!</p>
+              </div>
+              
+              <div class="content">
+                  <div class="card">
+                      <h2>🎮 Game Introduction</h2>
+                      <p>A classic game where you play against the computer. Choose Rock, Paper, or Scissors to see who wins!</p>
+                  </div>
+                  
+                  <div class="card">
+                      <h2>🎯 How to Play</h2>
+                      <ul>
+                          <li>Click on 🪨 Rock, 📄 Paper, or ✂️ Scissors to make your choice</li>
+                          <li>Rock beats Scissors</li>
+                          <li>Scissors beats Paper</li>
+                          <li>Paper beats Rock</li>
+                          <li>First to 5 points wins the game!</li>
+                          <li>Bet on your choices to win coins!</li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <button id="startButton">🚀 Start Game</button>
+          </div>
+          
+          <!-- Second Screen -->
+          <div id="secondScreen" style="display: none;">
+              <div class="header">
+                  <h1>🪨📄✂️ Rock Paper Scissors</h1>
+              </div>
+              
+              <div id="gameStats">
+                  <div class="stat-card">
+                      <div class="stat-label">👤 Player</div>
+                      <div class="stat-value" id="playerScore">0</div>
+                  </div>
+                  <div class="stat-card">
+                      <div class="stat-label">🖥️ Computer</div>
+                      <div class="stat-value" id="computerScore">0</div>
+                  </div>
+                  <div class="stat-card">
+                      <div class="stat-label">🤝 Draws</div>
+                      <div class="stat-value" id="drawScore">0</div>
+                  </div>
+                  <div class="stat-card">
+                      <div class="stat-label">💰 Balance</div>
+                      <div class="stat-value" id="balance">1000</div>
+                  </div>
+              </div>
+              
+              <div id="bettingArea">
+                  <div class="bet-controls">
+                      <button id="decreaseBet" class="bet-btn">-</button>
+                      <div class="bet-display">
+                          <span>Bet: </span>
+                          <span id="currentBet">100</span>
+                      </div>
+                      <button id="increaseBet" class="bet-btn">+</button>
+                  </div>
+              </div>
+              
+              <div id="gameArea">
+                  <div id="playerChoice" class="choice-container">
+                      <h3>👤 Your Choice</h3>
+                      <div id="playerSelection" class="selection"></div>
+                  </div>
+                  
+                  <div class="vs">VS</div>
+                  
+                  <div id="computerChoice" class="choice-container">
+                      <h3>🖥️ Computer Choice</h3>
+                      <div id="computerSelection" class="selection"></div>
+                  </div>
+              </div>
+              
+              <div id="choices">
+                  <button class="choice-btn" data-choice="rock">
+                      <div class="btn-content">
+                          <div class="emoji">🪨</div>
+                          <div class="label">Rock</div>
+                      </div>
+                  </button>
+                  <button class="choice-btn" data-choice="paper">
+                      <div class="btn-content">
+                          <div class="emoji">📄</div>
+                          <div class="label">Paper</div>
+                      </div>
+                  </button>
+                  <button class="choice-btn" data-choice="scissors">
+                      <div class="btn-content">
+                          <div class="emoji">✂️</div>
+                          <div class="label">Scissors</div>
+                      </div>
+                  </button>
+              </div>
+              
+              <div id="result">Choose Rock, Paper, or Scissors!</div>
+          </div>
+          
+          <!-- Game Over Popup -->
+          <div id="gameOverPopup" style="display: none;">
+              <div id="popupContent">
+                  <h2>🏁 Game Over</h2>
+                  <div id="finalResult"></div>
+                  <button id="playAgainButton">🔄 Play Again</button>
+              </div>
+          </div>
+      </div>
+      
+      <script>
+          // Game state
+          let gameState = {
+              playerScore: 0,
+              computerScore: 0,
+              drawScore: 0,
+              balance: 1000,
+              currentBet: 100,
+              gameOver: false
+          };
+  
+          // DOM Elements
+          const firstScreen = document.getElementById('firstScreen');
+          const secondScreen = document.getElementById('secondScreen');
+          const startButton = document.getElementById('startButton');
+          const playerScoreEl = document.getElementById('playerScore');
+          const computerScoreEl = document.getElementById('computerScore');
+          const drawScoreEl = document.getElementById('drawScore');
+          const balanceEl = document.getElementById('balance');
+          const playerSelection = document.getElementById('playerSelection');
+          const computerSelection = document.getElementById('computerSelection');
+          const choiceButtons = document.querySelectorAll('.choice-btn');
+          const resultEl = document.getElementById('result');
+          const gameOverPopup = document.getElementById('gameOverPopup');
+          const playAgainButton = document.getElementById('playAgainButton');
+          const finalResult = document.getElementById('finalResult');
+          const decreaseBetBtn = document.getElementById('decreaseBet');
+          const increaseBetBtn = document.getElementById('increaseBet');
+          const currentBetEl = document.getElementById('currentBet');
+  
+          // Game choices with emojis
+          const choices = {
+              rock: '🪨',
+              paper: '📄',
+              scissors: '✂️'
+          };
+  
+          // Initialize game
+          function initGame() {
+              updateScore();
+              updateBalance();
+              resultEl.textContent = "Choose Rock, Paper, or Scissors!";
+              resultEl.style.color = "#333";
+          }
+  
+          // Update score display
+          function updateScore() {
+              playerScoreEl.textContent = gameState.playerScore;
+              computerScoreEl.textContent = gameState.computerScore;
+              drawScoreEl.textContent = gameState.drawScore;
+          }
+  
+          // Update balance display
+          function updateBalance() {
+              balanceEl.textContent = gameState.balance;
+              currentBetEl.textContent = gameState.currentBet;
+          }
+  
+          // Computer choice
+          function getComputerChoice() {
+              const choices = ['rock', 'paper', 'scissors'];
+              const randomIndex = Math.floor(Math.random() * 3);
+              return choices[randomIndex];
+          }
+  
+          // Determine winner
+          function determineWinner(playerChoice, computerChoice) {
+              if (playerChoice === computerChoice) {
+                  return 'draw';
+              }
+              
+              if (
+                  (playerChoice === 'rock' && computerChoice === 'scissors') ||
+                  (playerChoice === 'paper' && computerChoice === 'rock') ||
+                  (playerChoice === 'scissors' && computerChoice === 'paper')
+              ) {
+                  return 'player';
+              }
+              
+              return 'computer';
+          }
+  
+          // Play round
+          function playRound(playerChoice) {
+              if (gameState.gameOver || gameState.balance < gameState.currentBet) return;
+              
+              const computerChoice = getComputerChoice();
+              
+              // Display choices with emojis
+              playerSelection.textContent = choices[playerChoice];
+              computerSelection.textContent = choices[computerChoice];
+              
+              // Add animation
+              playerSelection.style.transform = 'scale(0)';
+              computerSelection.style.transform = 'scale(0)';
+              
+              setTimeout(() => {
+                  playerSelection.style.transform = 'scale(1)';
+                  computerSelection.style.transform = 'scale(1)';
+              }, 100);
+              
+              // Determine winner
+              const winner = determineWinner(playerChoice, computerChoice);
+              
+              // Update scores and balance
+              if (winner === 'player') {
+                  gameState.playerScore++;
+                  gameState.balance += gameState.currentBet;
+                  resultEl.textContent = `🎉 You Win! +${gameState.currentBet} coins`;
+                  resultEl.style.color = "#4CAF50";
+              } else if (winner === 'computer') {
+                  gameState.computerScore++;
+                  gameState.balance -= gameState.currentBet;
+                  resultEl.textContent = `💻 Computer Wins! -${gameState.currentBet} coins`;
+                  resultEl.style.color = "#f44336";
+              } else {
+                  gameState.drawScore++;
+                  resultEl.textContent = "🤝 It's a Draw!";
+                  resultEl.style.color = "#FFC107";
+              }
+              
+              updateScore();
+              updateBalance();
+              
+              // Check for game over (first to 5 points or no balance)
+              if (gameState.playerScore >= 5 || gameState.computerScore >= 5 || gameState.balance <= 0) {
+                  setTimeout(endGame, 1000);
+              }
+          }
+  
+          // End game
+          function endGame() {
+              gameState.gameOver = true;
+              
+              if (gameState.playerScore > gameState.computerScore) {
+                  finalResult.innerHTML = `
+                      <div style="color: #4CAF50; font-size: 2.5rem; margin-bottom: 20px;">🏆 You Won!</div>
+                      <div>Final Score: ${gameState.playerScore} - ${gameState.computerScore}</div>
+                      <div>Final Balance: ${gameState.balance} coins</div>
+                      <div style="margin-top: 15px;">You defeated the computer! 🎉</div>
+                  `;
+              } else if (gameState.computerScore > gameState.playerScore) {
+                  finalResult.innerHTML = `
+                      <div style="color: #f44336; font-size: 2.5rem; margin-bottom: 20px;">😞 Computer Won!</div>
+                      <div>Final Score: ${gameState.computerScore} - ${gameState.playerScore}</div>
+                      <div>Final Balance: ${gameState.balance} coins</div>
+                      <div style="margin-top: 15px;">Better luck next time! 💪</div>
+                  `;
+              } else {
+                  finalResult.innerHTML = `
+                      <div style="color: #FFC107; font-size: 2.5rem; margin-bottom: 20px;">🤝 It's a Tie!</div>
+                      <div>Final Score: ${gameState.playerScore} - ${gameState.computerScore}</div>
+                      <div>Final Balance: ${gameState.balance} coins</div>
+                      <div style="margin-top: 15px;">Great game! 🎮</div>
+                  `;
+              }
+              
+              gameOverPopup.style.display = 'flex';
+          }
+  
+          // Reset game
+          function resetGame() {
+              gameState = {
+                  playerScore: 0,
+                  computerScore: 0,
+                  drawScore: 0,
+                  balance: 1000,
+                  currentBet: 100,
+                  gameOver: false
+              };
+              
+              playerSelection.textContent = '';
+              computerSelection.textContent = '';
+              resultEl.textContent = "Choose Rock, Paper, or Scissors!";
+              resultEl.style.color = "#333";
+              
+              updateScore();
+              updateBalance();
+              gameOverPopup.style.display = 'none';
+          }
+  
+          // Bet controls
+          function updateBet(amount) {
+              if (gameState.gameOver) return;
+              
+              const newBet = gameState.currentBet + amount;
+              if (newBet >= 100 && newBet <= gameState.balance) {
+                  gameState.currentBet = newBet;
+                  updateBalance();
+              }
+          }
+  
+          // Event Listeners
+          startButton.addEventListener('click', () => {
+              firstScreen.style.display = 'none';
+              secondScreen.style.display = 'block';
+              initGame();
+          });
+  
+          choiceButtons.forEach(button => {
+              button.addEventListener('click', () => {
+                  const choice = button.getAttribute('data-choice');
+                  playRound(choice);
+              });
+          });
+  
+          playAgainButton.addEventListener('click', () => {
+              resetGame();
+          });
+  
+          decreaseBetBtn.addEventListener('click', () => {
+              updateBet(-100);
+          });
+  
+          increaseBetBtn.addEventListener('click', () => {
+              updateBet(100);
+          });
+  
+          // Initialize the game when page loads
+          document.addEventListener('DOMContentLoaded', () => {
+              // Game is initialized when start button is clicked
+          });
+      </script>
+  </body>
+  </html>
+  ]]>
+  </aiFile>
+  </aiGame>
